@@ -3,17 +3,19 @@
 include 'config.php';
 session_start();
 
-// page redirect
-$usermail="";
-$usermail=$_SESSION['usermail'];
-if($usermail == true){
-
-}else{
-  header("location: index.php");
-}
-
-?>
-
+function validateUserSession() {
+    if (!isset($_SESSION['usermail']) || empty($_SESSION['usermail'])) {
+        return false;
+    }
+    
+    if (!filter_var($_SESSION['usermail'], FILTER_VALIDATE_EMAIL)) {
+        return false;
+    }
+    
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 3600)) {
+        session_destroy();
+        return false;
+    }
 
 <!DOCTYPE html>
 <html lang="en">
