@@ -17,6 +17,34 @@ function validateUserSession() {
         return false;
     }
 
+    $_SESSION['last_activity'] = time();
+    
+    return true;
+}
+
+// Función para redirigir de forma segura
+function redirectToLogin($message = "") {
+    // Limpiar cualquier output previo
+    if (ob_get_level()) {
+        ob_clean();
+    }
+    
+    // Destruir sesión si existe
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_destroy();
+    }
+    
+    // Redirigir con mensaje opcional
+    $redirect_url = "index.php";
+    if (!empty($message)) {
+        $redirect_url .= "?error=" . urlencode($message);
+    }
+    
+    header("Location: " . $redirect_url);
+    exit(); // Importante: detener la ejecución
+}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
