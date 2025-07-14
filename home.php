@@ -44,6 +44,25 @@ function redirectToLogin($message = "") {
     exit(); // Importante: detener la ejecución
 }
 
+if (!validateUserSession()) {
+    redirectToLogin("Sesión expirada o inválida. Por favor, inicia sesión nuevamente.");
+}
+
+// Si llegamos aquí, el usuario está autenticado correctamente
+$usermail = $_SESSION['usermail'];
+
+// Opcional: Regenerar ID de sesión para mayor seguridad
+if (!isset($_SESSION['regenerated']) || $_SESSION['regenerated'] < time() - 300) {
+    session_regenerate_id(true);
+    $_SESSION['regenerated'] = time();
+}
+
+// Establecer headers de seguridad
+header("X-Frame-Options: DENY");
+header("X-Content-Type-Options: nosniff");
+header("X-XSS-Protection: 1; mode=block");
+
+
 
 <!DOCTYPE html>
 <html lang="en">
