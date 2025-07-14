@@ -22,42 +22,35 @@ function validateUserSession() {
     return true;
 }
 
-// Función para redirigir de forma segura
 function redirectToLogin($message = "") {
-    // Limpiar cualquier output previo
     if (ob_get_level()) {
         ob_clean();
     }
     
-    // Destruir sesión si existe
     if (session_status() === PHP_SESSION_ACTIVE) {
         session_destroy();
     }
     
-    // Redirigir con mensaje opcional
     $redirect_url = "index.php";
     if (!empty($message)) {
         $redirect_url .= "?error=" . urlencode($message);
     }
     
     header("Location: " . $redirect_url);
-    exit(); // Importante: detener la ejecución
+    exit(); 
 }
 
 if (!validateUserSession()) {
-    redirectToLogin("Sesión expirada o inválida. Por favor, inicia sesión nuevamente.");
+    redirectToLogin("Expired or invalid session. Please log in again.");
 }
 
-// Si llegamos aquí, el usuario está autenticado correctamente
 $usermail = $_SESSION['usermail'];
 
-// Opcional: Regenerar ID de sesión para mayor seguridad
 if (!isset($_SESSION['regenerated']) || $_SESSION['regenerated'] < time() - 300) {
     session_regenerate_id(true);
     $_SESSION['regenerated'] = time();
 }
 
-// Establecer headers de seguridad
 header("X-Frame-Options: DENY");
 header("X-Content-Type-Options: nosniff");
 header("X-XSS-Protection: 1; mode=block");
